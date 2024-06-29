@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesto Todo</title>
+    <script src="https://unpkg.com/htmx.org@2.0.0"
+        integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h1>Pesto ToDo App</h1>
+
+        <form action="/create" method="post" hx-boost="true">
+            <input type="text" name="title" placeholder="New task" value="" autocomplete="off">
+            <input type="text" name="description" placeholder="Something..." value="" autocomplete="off">
+            <button type="submit" value="Add" class="button-primary" role="button">Add</button>
+        </form>
+
+        <ul>
+            {% for task in tasks %}
+            <li id="task-{{ task.id }}">
+                {{ task.title }} - {{ task.description }} - {{ task.status }}
+                <button hx-post="/update?id={{ task.id }}&status=todo" hx-target="body" hx-trigger="click">Todo</button>
+                <button hx-post="/update?id={{ task.id }}&status=inprogress" hx-target="body" hx-trigger="click">In
+                    Progress</button>
+                <button hx-post="/update?id={{ task.id }}&status=done" hx-target="body" hx-trigger="click">Done</button>
+                <button hx-post="/delete/{{ task.id }}" hx-target="body" hx-trigger="click">Delete</button>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+
+</html>

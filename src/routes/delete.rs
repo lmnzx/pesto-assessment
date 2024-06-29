@@ -1,4 +1,8 @@
-use axum::{extract::Path, http::StatusCode, response::IntoResponse, Extension};
+use axum::{
+    extract::Path,
+    response::{IntoResponse, Redirect},
+    Extension,
+};
 use libsql::Connection;
 
 pub async fn delete_task(
@@ -9,5 +13,5 @@ pub async fn delete_task(
 
     stmt.execute([id]).await.unwrap();
 
-    (StatusCode::OK, format!("task {id} deleted"))
+    Redirect::to("/")
 }

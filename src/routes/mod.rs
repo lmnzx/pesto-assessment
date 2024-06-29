@@ -3,7 +3,10 @@ mod delete;
 mod index;
 mod update;
 
-use axum::{routing::get, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 
 use create::*;
 use delete::*;
@@ -47,8 +50,8 @@ impl Status {
 // Axum router
 pub fn routers() -> Router {
     Router::new()
-        .route("/create", get(add_task))
+        .route("/create", post(add_task))
         .route("/", get(all))
-        .route("/delete/:id", get(delete_task))
-        .route("/update", get(update_task))
+        .route("/delete/:id", post(delete_task))
+        .route("/update", post(update_task))
 }
