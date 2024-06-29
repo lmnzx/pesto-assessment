@@ -12,8 +12,8 @@
 </head>
 
 <body>
-    <div class="container-fluid">
-        <h1>Pesto ToDo App</h1>
+    <div class="container">
+        <h1 style="padding-top: 10rem;">Pesto ToDo App</h1>
 
         <form action="/create" method="post" hx-boost="true">
             <input type="text" name="title" placeholder="New task" value="" autocomplete="off">
@@ -21,19 +21,40 @@
             <button type="submit" value="Add" class="button-primary" role="button">Add</button>
         </form>
 
-        <ul>
-            {% for task in tasks %}
-            <li id="task-{{ task.id }}">
-                {{ task.title }} - {{ task.description }} - {{ task.status }}
-                <button hx-post="/update?id={{ task.id }}&status=todo" hx-target="body" hx-trigger="click">Todo</button>
-                <button hx-post="/update?id={{ task.id }}&status=inprogress" hx-target="body" hx-trigger="click">In
-                    Progress</button>
-                <button hx-post="/update?id={{ task.id }}&status=done" hx-target="body" hx-trigger="click">Done</button>
-                <button hx-post="/delete/{{ task.id }}" hx-target="body" hx-trigger="click">Delete</button>
-            </li>
-            {% endfor %}
+        </div<ul>
+        {% for task in tasks %}
+        <li id="task-{{ task.id }}" class="task-item">
+            {{ task.title }} - {{ task.description }}
+            <select class="status-selector" data-task-id="{{ task.id }}">
+                <option value="todo" {% if task.status=="Todo" %}selected{% endif %}>Todo</option>
+                <option value="inprogress" {% if task.status=="InProgress" %}selected{% endif %}>In Progress
+                </option>
+                <option value="done" {% if task.status=="Done" %}selected{% endif %}>Done</option>
+            </select>
+            <button class="contrast" hx-post="/delete/{{ task.id }}" hx-target="body" hx-trigger="click">Delete</button>
+        </li>
+        {% endfor %}
         </ul>
-    </div>
+
+        <script>
+            document.querySelectorAll('.status-selector').forEach(function (selector) {
+                selector.addEventListener('change', function () {
+                    const taskId = this.getAttribute('data-task-id');
+                    const newStatus = this.value;
+                    const url = `/update?id=${taskId}&status=${newStatus}`;
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                    }).then(response => response.text())
+                        .then(html => {
+                            document.body.innerHTML = html;
+                        });
+                });
+            });
+        </script>
 </body>
 
 </html>
